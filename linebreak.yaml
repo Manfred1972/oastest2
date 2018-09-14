@@ -37,7 +37,11 @@ paths:
       tags:
       - "pet"
       summary: "Add a new pet to the store"
-      description: ""
+      description: |
+        this operation
+        will add
+        a new pet 
+        if you really want it.
       operationId: "addPet"
       consumes:
       - "application/json"
