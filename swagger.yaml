@@ -1,0 +1,595 @@
+swagger: '2.0'
+info:
+  version: '1.0.0'
+  title: Innosoft ReST API
+  description: Innosoft ReST API
+host: www.example.com
+basePath: /
+schemes:
+- http
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  /api/tickets:
+    get:
+      operationId: getAllTickets
+      tags: [Tickets]
+      summary: 'List all existing tickets.'
+      description: 'Retrieve links to all tickets at once. Please be aware, that the response will only contain the URLs of the tickets and not the data of each ticket.'
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              type: string
+              format: uri
+          examples:
+            application/json:
+              - api/tickets/1
+              - api/tickets/2
+              - api/tickets/3
+        403:
+          description: |
+            Forbidden. Possible error codes are:
+            * TIC-A-0000 | You have insufficient permissions to read tickets.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ErrorObject'
+          examples:
+            application/json:
+              - errorCode: 'TIC-A-0000'
+                message: 'You either have insufficient permissions to read Tickets or reading is disabled in general.'
+    post:
+      operationId: createTicket
+      tags: [Tickets]
+      summary: 'Create a new ticket.'
+      description: 'Submit a new ticket to Innosoft. Omit fields marked as readOnly. The response will contain the generated values.'
+      produces:
+        - application/json
+      parameters:
+        - name: ticket
+          in: body
+          required: true
+          description: The ticket resource that will be added to Innosoft.
+          schema:
+            $ref: '#/definitions/Ticket'
+      responses:
+        201:
+          description: The ticket has been created successfully.
+          headers:
+            Location:
+              type: string
+              format: uri
+              description: 'Link to the created resource.'
+          schema:
+            $ref: '#/definitions/Ticket'
+        400:
+          description: |
+            Bad Request. Possible error codes are:
+            * TIC-C-0002 | A mandatory field is missing.
+            * TIC-C-0003 | A ticket with the given ticketId already exists.
+            * TIC-C-0005 | A referenced entity could not be found.
+            * TIC-C-0006 | At least one field has exceeded the allowed character length.
+            * TIC-C-0013 | The fields hotliner and groupId both have values despite being exclusive.
+            * TIC-C-0016 | A DateTime property has invalid values (i.e. month = 0 or minute = 60).
+            * TIC-C-0017 | A DateTime property is outside of the allowed range (i.e. year = 1752).
+            * TIC-C-1000 | Invalid JSON object.
+            * TIC-C-1001 | No content provided in the body of the request.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ErrorObject'
+          examples:
+            application/json:
+              - errorCode: 'TIC-C-0006'
+                message: 'The property ''hotliner'' cannot have more than 12 characters.'            
+        403:
+          description: |
+            Forbidden. Possible error codes are:
+            * TIC-C-0000 | You have insufficient permissions to create tickets.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ErrorObject'
+          examples:
+            application/json:
+              - errorCode: 'TIC-C-0000'
+                message: 'You either have insufficient permissions to create the ticket or creating is disabled in general.'
+        500:
+          description: |
+            Internal Server Error. One of the possible error codes could be:
+            * TIC-C-0001 | The number range is exceeded.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ErrorObject'
+          examples:
+            application/json:
+              - errorCode: 'TIC-C-0001'
+                message: 'The number range is exceeded.'
+  
+  /api/tickets/{ticketId}:
+    parameters:
+      - $ref: '#/parameters/ticketId'  
+    get:
+      operationId: getTicket
+      tags: [Tickets]
+      summary: 'Get ticket by id.'
+      description: 'Retrieve the data of a single ticket by its id.'
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Ticket'
+        403:
+          description: |
+            Forbidden. Possible error codes are:
+            * TIC-R-0000 | You have insufficient permissions to read tickets.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ErrorObject'
+          examples:
+            application/json:
+              - errorCode: 'TIC-R-0000'
+                message: 'You either have insufficient permissions to read the ticket or reading is disabled in general.'
+        500:
+          description: 'Internal Server Error: Possible if a general error has occurred or if the ticket could be found in the database but has invalid data. This is possible if the data was written by another system which has less validation rules. Please check the protocol file of the server for more information.'
+    put:
+      operationId: putTicket
+      tags: [Tickets]
+      summary: 'Create or update a ticket.'
+      description: 'Update a ticket resource if it already exists. Otherwise it will be created.'
+      produces:
+        - application/json
+      parameters:
+        - name: ticket
+          in: body
+          required: true
+          description: 'The ticket resource. If the property **ticketId** is sent in the request it will be ignored because the ticketId in the URL is leading.'
+          schema:
+            $ref: '#/definitions/Ticket'
+      responses:
+        200:
+          description: 'The ticket has been updated successfully.'
+          schema:
+            $ref: '#/definitions/Ticket'          
+        201:
+          description: 'The ticket has been created successfully.'
+          schema:
+            $ref: '#/definitions/Ticket'
+        400:
+          description: |
+            Bad Request.
+            Possible error codes for Update are:
+            * TIC-U-0002 | A mandatory field is missing.
+            * TIC-U-0005 | A referenced entity could not be found.
+            * TIC-U-0006 | At least one field has exceeded the allowed character length.
+            * TIC-U-0013 | The fields hotliner and groupId both have values despite being exclusive.
+            * TIC-U-0016 | A DateTime property has invalid values (i.e. month = 0 or minute = 60).
+            * TIC-U-0017 | A DateTime property is outside of the allowed range (i.e. year = 1752).
+            * TIC-U-0200 | Ticket is closed. Changes are not allowed.
+            * TIC-U-0202 | Can't change hotliner or groupId directly. Use forward instead.
+            * TIC-U-1000 | Invalid JSON object.
+            * TIC-U-1001 | No content provided in the body of the request.             
+            
+            Possible error codes for Create are:
+            * TIC-C-0002 | A mandatory field is missing.
+            * TIC-C-0005 | A referenced entity could not be found.
+            * TIC-C-0006 | At least one field has exceeded the allowed character length.
+            * TIC-C-0013 | The fields hotliner and groupId both have values despite being exclusive.
+            * TIC-C-0016 | A DateTime property has invalid values (i.e. month = 0 or minute = 60).
+            * TIC-C-0017 | A DateTime property is outside of the allowed range (i.e. year = 1752).
+            * TIC-C-1000 | Invalid JSON object.
+            * TIC-C-1001 | No content provided in the body of the request.          
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ErrorObject'
+          examples:
+            application/json:
+              - errorCode: 'TIC-U-0006'
+                message: 'The property ''title'' cannot have more than 80 characters.'
+        403:
+          description: |
+            Forbidden. Possible error codes are:
+            * TIC-U-0000 | You have insufficient permissions to update tickets.
+            * TIC-C-0000 | You have insufficient permissions to create tickets.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ErrorObject'
+          examples:
+            application/json:
+              - errorCode: 'TIC-U-0000'
+                message: 'You either have insufficient permissions to update the ticket or updating is disabled in general.'
+    delete:
+      operationId: deleteTicket
+      tags: [Tickets]
+      summary: 'Delete a ticket.'
+      description: 'Delete a single ticket. Corresponding data like the history and ticket texts will be deleted as well.'
+      produces:
+        - application/json
+      responses:
+        204:
+          description: 'The ticket has been deleted successfully.'
+        403:
+          description: |
+            Forbidden. Possible error codes are:
+            * TIC-D-0000 | You have insufficient permissions to delete tickets.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ErrorObject'
+          examples:
+            application/json:
+              - errorCode: 'TIC-D-0000'
+                message: 'You either have insufficient permissions to delete the ticket or deleting is disabled in general.'              
+  
+  /api/tickets/{ticketId}/forward:
+    parameters:
+      - $ref: '#/parameters/ticketId'  
+    post:
+      operationId: forwardTicket
+      tags: [Tickets]
+      summary: 'Forward a ticket.'
+      description: 'Forward a ticket to another hotliner or group.'
+      produces:
+        - application/json
+      parameters:
+        - name: forward target
+          in: body
+          required: true
+          description: 'Forward target that only contains the new hotliner or groupId.'
+          schema:
+            type: object
+            title: 'Forward target'
+            description: 'Contains either a hotliner or a group that shall become responsible for the ticket.'
+            properties:
+              hotliner:
+                description: 'Login name of the user who shall become responsible for the ticket (PWUSER.NAME).'
+                type: string
+                maxLength: 12
+              groupId:
+                description: 'Id of the group that shall become responsible for the ticket (OPTION_G.GRNR).'
+                type: integer
+            example:
+              hotliner: 'JSMITH'
+              groupId: null
+      responses:
+        201:
+          description: 'The ticket has been forwarded successfully.'
+          schema:
+            $ref: '#/definitions/Ticket'
+        400:
+          description: |
+            Bad Request. Possible error codes are:
+            * TIC-C-0002 | A mandatory field is missing.
+            * TIC-C-0005 | A referenced entity could not be found.
+            * TIC-C-0006 | At least one field has exceeded the allowed character length.
+            * TIC-C-0013 | The fields hotliner and groupId both have values despite being exclusive.
+            * TIC-C-0200 | Ticket is closed. Changes are not allowed.
+            * TIC-C-0203 | Can't forward to the same hotliner or groupId as before.
+            * TIC-C-1000 | Invalid JSON object.
+            * TIC-C-1001 | No content provided in the body of the request.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ErrorObject'
+          examples:
+            application/json:
+              - errorCode: 'TIC-C-0006'
+                message: 'The property ''hotliner'' cannot have more than 12 characters.'              
+        403:
+          description: |
+            Forbidden. Possible error codes are:
+            * TIC-C-0000 | You have insufficient permissions to forward tickets.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ErrorObject'
+          examples:
+            application/json:
+              - errorCode: 'TIC-C-0000'
+                message: 'You either have insufficient permissions to forward the ticket or forwarding is disabled in general.'
+
+  /api/tickets/{ticketId}/close:
+    parameters:
+      - $ref: '#/parameters/ticketId'  
+    put:
+      operationId: closeTicket
+      tags: [Tickets]
+      summary: 'Close a ticket.'
+      description: 'Close a ticket which makes it no longer editable.'
+      produces:
+        - application/json
+      responses:
+        200:
+          description: 'The ticket has been closed successfully.'
+          schema:
+            $ref: '#/definitions/Ticket'
+        403:
+          description: |
+            Forbidden. Possible error codes are:
+            * TIC-U-0000 | You have insufficient permissions to close tickets.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ErrorObject'
+          examples:
+            application/json:
+              - errorCode: 'TIC-U-0000'
+                message: 'You either have insufficient permissions to close the ticket or closing is disabled in general.'
+
+  /api/tickets/{ticketId}/reopen:
+    parameters:
+      - $ref: '#/parameters/ticketId'  
+    put:
+      operationId: reopenTicket
+      tags: [Tickets]
+      summary: 'Reopen a ticket.'
+      description: 'Reopen a closed ticket, which makes it editable again.'
+      produces:
+        - application/json
+      responses:
+        200:
+          description: The ticket has been reopened successfully.
+          schema:
+            $ref: '#/definitions/Ticket'
+        403:
+          description: |
+            Forbidden. Possible error codes are:
+            * TIC-U-0000 | You have insufficient permissions to reopen tickets.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ErrorObject'
+          examples:
+            application/json:
+              - errorCode: 'TIC-U-0000'
+                message: 'You either have insufficient permissions to reopen the ticket or reopening is disabled in general.'            
+            
+  /api/tickets/{ticketId}/history:
+    parameters:
+      - $ref: '#/parameters/ticketId'
+    get:
+      operationId: getTicketHistoryLevels
+      tags: [Tickets]
+      summary: Get the history levels of a ticket.
+      description: 'Retrieve links to all levels of a ticket except the current one. E.g.: If a ticket has 4 levels, the history will contain 1-3. The levels are created by forwarding a ticket. Please be aware, that the response will only contain the URLs of the levels and not the actual data.'
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              type: string
+              format: uri
+          examples:
+            application/json:
+              - 'api/tickets/1'
+              - 'api/tickets/2'
+              - 'api/tickets/3'
+        403:
+          description: |
+            Forbidden. Possible error codes are:
+            * TIC-A-0000 | You have insufficient permissions to read tickets.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ErrorObject'
+          examples:
+            application/json:
+              - errorCode: 'TIC-A-0000'
+                message: 'You either have insufficient permissions to read Tickets or reading is disabled in general.'
+  
+  /api/tickets/{ticketId}/history/{level}:
+    parameters:
+      - $ref: '#/parameters/ticketId'
+      - name: level
+        in: path
+        type: integer
+        required: true
+        description: Ticket level. Each forward results in a new level.
+    get:
+      operationId: getTicketHistory
+      tags: [Tickets]
+      summary: Get the ticket history for a specific level.
+      description: Retrieve the ticket data at a specific history level. It represents the state of the ticket before it was forwarded.
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Ticket'
+        403:
+          description: |
+            Forbidden. Possible error codes are:
+            * TIC-R-0000 | You have insufficient permissions to read tickets.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ErrorObject'
+          examples:
+            application/json:
+              - errorCode: 'TIC-R-0000'
+                message: 'You either have insufficient permissions to read Tickets or reading is disabled in general.'
+
+definitions:
+
+  ErrorObject:
+    type: object
+    properties:
+      errorCode:
+        type: string
+        maxLength: 10
+        description: |
+          An error code which can be used to look up more information in this documentation.
+          The structure is **{objectType}-{actionType}-{errorNumber}**
+      message:
+        type: string
+        description: 'Detailed error message which contains more information about the error like field names or information on how the request should be modified to be valid.'
+  
+  ISDateTime:
+    type: object
+    required:
+      - Year
+      - Day
+      - Hour
+      - Minute
+      - Month
+      - Second
+    properties:
+      Year:
+        description: ''
+        type: integer
+        maximum: 9999
+        minimum: 1753
+      Month:
+        description: ''
+        type: integer
+        maximum: 12
+        minimum: 1
+      Day:
+        description: ''
+        type: integer
+        maximum: 31
+        minimum: 1
+      Hour:
+        description: ''
+        type: integer
+        maximum: 23
+        minimum: 0
+      Minute:
+        description: ''
+        type: integer
+        maximum: 59
+        minimum: 0
+      Second:
+        description: ''
+        type: integer
+        maximum: 59
+        minimum: 0  
+  
+  Ticket:
+    type: object
+    properties:
+      ticketId:
+        type: integer
+        readOnly: true
+        description: 'Unique identifier'
+      level:
+        type: integer
+        readOnly: true        
+        description: 'A new ticket starts with the level 1. Each forward will result in a new level, leaving the old ones locked for history purposes. Only the highest level can be edited until it is being closed.'
+      title:
+        type: string
+        maxLength: 80        
+        description: 'Title text of the ticket.'
+      typeId:
+        type: string
+        maxLength: 10
+        description: 'Reference to the type of the ticket. This property references the field PKEY from the Innosoft table PROKEY.'
+      processingStatusId:
+        type: string
+        enum:
+          - OpenNew          
+          - OpenForwarded
+          - Reopened
+          - Predecessor
+          - Closed
+        readOnly: true
+        description: 'Internal ticket status. You can change it indirectly via the respective actions like close, forward, or reopen.'
+      displayStatusId:
+        type: integer
+        description: |
+          Reference to the display status (PROSTATUS.PROSTATUSKEY).
+          
+          ---
+          **Note:** This status does not affect logic like the **processingStatusId** does. Take the following example: If you define a display status "closed" and set the ticket to it, it will still be editable until you explicitly call close.
+          
+          ---
+      hotliner:
+        type: string
+        maxLength: 12
+        description: 'Login name of the currently responsible person (PWUSER.NAME). Can be omitted if you provide a groupId. If neither of the two are provided, the ReST-Api user will be taken as hotliner. Providing both will result in an error.'
+      groupId:
+        type: integer
+        description: 'Id of the currently responsible group (OPTION_G.GRNR). Can be omitted if you provide a hotliner. If neither of the two are provided, the ReST-Api user will be taken as hotliner. Providing both will result in an error.'
+      fixedDate:
+        $ref: '#/definitions/ISDateTime'
+      levelStart:
+        $ref: '#/definitions/ISDateTime'
+      levelEnd:
+        $ref: '#/definitions/ISDateTime'
+      urgency:
+        type: integer
+        description: 'A number that indicates the priority of the ticket.'
+      addressId:
+        type: string
+        maxLength: 20
+        description: 'Related address/customer of the ticket (VKUNADR.ADRNR).'
+      contactPersonId:
+        type: integer
+        description: 'Contact person of the ticket (VKUNPART.POS).'
+      machineId:
+        type: string
+        maxLength: 20
+        description: 'This field lets you assign a machine to the ticket (MAPARK.MASCHNR).'
+      projectId:
+        type: string
+        maxLength: 20
+        description: 'The related project (KUNDE.PROJNR).'
+      faultCodeId:
+        type: string
+        maxLength: 20
+        description: 'Error code: Fault (PROSTOER.STOERUNG_CODE).'
+      faultLocationCodeId:
+        type: string
+        maxLength: 20
+        description: 'Error code: Fault location (PROORT.ORT_CODE).'
+      causeCodeId:
+        type: string
+        maxLength: 20
+        description: 'Error code: Cause (PROURS.URSACHE_CODE).'
+      repairCodeId:
+        type: string
+        maxLength: 20
+        description: 'Error code: Repair (PROBEH.BEHEBUNG_CODE).'
+  
+  ForwardTarget:
+    title: Forward target
+    description: Contains either a hotliner or a group that shall become responsible for the ticket.
+    example:
+      hotliner: JSMITH
+      groupId:
+    type: object
+    properties:
+      hotliner:
+        description: Login name of the user who shall become responsible for the ticket (PWUSER.NAME).
+        type: string
+        maxLength: 12
+      groupId:
+        description: Id of the group that shall become responsible for the ticket (OPTION_G.GRNR).
+        type: integer
+        format: int32
+        
+parameters:
+  
+  ticketId:
+    name: ticketId
+    in: path
+    description: 'Unique identifier of a ticket.'
+    required: true
+    type: integer
