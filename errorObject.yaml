@@ -1,0 +1,14 @@
+definitions:
+
+  ErrorObject:
+    type: object
+    properties:
+      errorCode:
+        type: string
+        maxLength: 10
+        description: |
+          An error code which can be used to look up more information in this documentation.
+          The structure is **{objectType}-{actionType}-{errorNumber}**
+      message:
+        type: string
+        description: Detailed error message which contains more information about the error like field names or information on how the request should be modified to be valid.
