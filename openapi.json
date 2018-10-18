@@ -78,6 +78,10 @@
       "description": "Assignment machines are links between existing machines and a project assignment."
     },
     {
+      "name": "Projects\\Composite projects",
+      "description": "Manage a project and the related machines, materials and contact persons in one step."
+    },
+    {
       "name": "Projects\\Contact persons",
       "description": "Project contact persons are links between existing contact persons and a project."
     },
@@ -308,7 +312,7 @@
           "Addresses\\Assignments"
         ],
         "summary": "List all assignments for an address.",
-        "description": "Retrieve references to all assignments of a specific address.\n\nYou can use optional query parameters to filter by a specific time frame. Examples:\n* /api/addresses/42/assignments?since=2015-10-16\n* /api/addresses/42/assignments?until=2015-12-31T23:59:59\n* /api/addresses/42/assignments?since=2015-10-16&until=2015-10-31\n\n**Note:** Timezones are not supported, so the time should be converted to the local timezone of the database server first.    \n",
+        "description": "Retrieve an object with references to all assignments of a specific address.\n\nYou can use optional query parameters to filter by a specific time frame. Examples:\n* /api/addresses/42/assignments?since=2015-10-16\n* /api/addresses/42/assignments?until=2015-12-31T23:59:59\n* /api/addresses/42/assignments?since=2015-10-16&until=2015-10-31\n\n**Note:** Timezones are not supported, so the time should be converted to the local timezone of the database server first.    \n",
         "parameters": [
           {
             "name": "since",
@@ -795,7 +799,7 @@
           "Assignments"
         ],
         "summary": "List all assignments.",
-        "description": "Retrieve an object with a collection of resource references to all projects to which you have read access.\n\nYou can use optional query parameters to filter by a specific time frame. Examples:\n* /api/assignments?since=2015-10-16\n* /api/assignments?until=2015-12-31T23:59:59\n* /api/assignments?since=2015-10-16&until=2015-10-31\n\n**Note:** Timezones are not supported, so the time should be converted to the local timezone of the database server first.\n",
+        "description": "Retrieve an object with references to all assignments.\nYou can use optional query parameters to filter by a specific time frame, e.g.:\n* /api/assignments?since=2015-10-16\n* /api/assignments?until=2015-12-31T23:59:59\n* /api/assignments?since=2015-10-16&until=2015-10-31\n\n**Note:** Timezones are not supported, so the time should be converted to the local timezone of the database server first.\n",
         "parameters": [
           {
             "name": "since",
@@ -877,6 +881,253 @@
                   {
                     "errorCode": "ASS-A-0000",
                     "message": "You either have insufficient permissions to read assignments or reading is disabled in general."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/compositeProjects": {
+      "post": {
+        "operationId": "createCompositeProject",
+        "tags": [
+          "Projects\\Composite projects"
+        ],
+        "summary": "Create a new composite project.",
+        "description": "Add a project and optionally link machines, materials and contact persons to it in one step.",
+        "parameters": [
+          {
+            "name": "importMachineTree",
+            "in": "query",
+            "description": "Optional parameter to not only import the specified machines but the whole machine tree. This includes all related parent and child machines.\n\n/api/compositeProjects?importMachineTree=true\n",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "The composite project resource that will be added to Innosoft.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompositeProject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The composite project has been created successfully.",
+            "headers": {
+              "Location": {
+                "description": "Link to the created resource.",
+                "schema": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompositeProject"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Possible error codes are:\n* PRJ-C-0002 | A mandatory field is missing.\n* PRJ-C-0003 | The committed id is already used by another object.\n* PRJ-C-0005 | A referenced entity of the project or one of the subordinated resources could not be found.\n* PRJ-C-0006 | At least one field has exceeded the allowed character length.\n* PRJ-C-0007 | The referenced code exists but has an invalid type for a project.\n* PRJ-C-0008 | The referenced location has no parent debtor in the address hierarchy. Please provide *debtorId*. This error may also occur if the *locationId* is copied from the first machine.\n* PRJ-C-0009 | A referenced address exists but is invalid.\n* PRJ-C-0010 | A subordinated resource references an inactive entity.\n* PRJ-C-0013 | A subordinated resource references an address which does not belong to any address of the project.\n* PRJ-C-0016 | A DateTime property has invalid values (i.e. month = 0 or minute = 60).\n* PRJ-C-0017 | A DateTime property is outside of the allowed range (i.e. year = 1752).\n* PRJ-C-0018 | The provided end is before the begin.\n* PRJ-C-0022 | The entity referenced by debtorId is not a debtor.\n* PRJ-C-1000 | Malformed JSON content.\n* PRJ-C-1001 | No content provided in the body of the request.\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ErrorObject"
+                  }
+                },
+                "example": [
+                  {
+                    "errorCode": "PRJ-C-0006",
+                    "message": "The property 'externalId' cannot have more than 20 characters."
+                  }
+                ]
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden. Possible error codes are:\n* PRJ-C-0000 | You have insufficient permissions to create the project.\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ErrorObject"
+                  }
+                },
+                "example": [
+                  {
+                    "errorCode": "PRJ-C-0000",
+                    "message": "You either have insufficient permissions to create the project or creating is disabled in general."
+                  }
+                ]
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error. Known error codes are:\n* PRJ-C-0001 | The number range is exceeded.\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ErrorObject"
+                  }
+                },
+                "example": [
+                  {
+                    "errorCode": "PRJ-C-0001",
+                    "message": "The number range is exceeded."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/compositeProjects/{projectId}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/projectId"
+        }
+      ],
+      "get": {
+        "operationId": "getCompositeProject",
+        "tags": [
+          "Projects\\Composite projects"
+        ],
+        "summary": "Get composite project by id.",
+        "description": "Retrieve the data of a composite project by its id.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompositeProject"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden. Possible error codes are:\n* PRJ-R-0000 | You have insufficient permissions to read the project.\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ErrorObject"
+                  }
+                },
+                "example": [
+                  {
+                    "errorCode": "PRJ-R-0000",
+                    "message": "You either have insufficient permissions to read the project or reading is disabled in general."
+                  }
+                ]
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error: Possible if a general error has occurred or if the project could be found in the database but has invalid data.  This is possible if the data was written by another system which has less validation rules. Please check the protocol file of the  server for more information.\n"
+          }
+        }
+      },
+      "put": {
+        "operationId": "putCompositeProject",
+        "tags": [
+          "Projects\\Composite projects"
+        ],
+        "summary": "Create or update a composite project.",
+        "description": "Update a composite project if it already exists. Otherwise it will be created. In case of an update the related resources will be **replaced**. Therefore you need to describe the complete relations. If you only want to add a single machine for instance, it would be more suitable to use the specific endoint (api/projects/{projectId}/machines in this case).\n",
+        "requestBody": {
+          "required": true,
+          "description": "The composite project resource. The id in the URL is leading.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompositeProject"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "importMachineTree",
+            "in": "query",
+            "description": "Optional parameter to not only import the specified machines but the whole machine tree. This includes all related parent and child machines.\n\n/api/compositeProjects/PRJ-US-123?importMachineTree=true\n",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The composite project has been updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompositeProject"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "The composite project has been created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request.\nPossible error codes for Update are:\n* PRJ-U-0002 | A mandatory field is missing.\n* PRJ-U-0005 | A referenced entity of the project or one of the subordinated resources could not be found.\n* PRJ-U-0006 | At least one field has exceeded the allowed character length.\n* PRJ-U-0007 | The referenced code exists but has an invalid type for a project.\n* PRJ-U-0008 | The referenced location has no parent debtor in the address hierarchy. Please provide *debtorId*. This error may also occur if the *locationId* is copied from the first machine.\n* PRJ-U-0009 | A referenced address exists but is invalid.\n* PRJ-U-0010 | A subordinated resource references an inactive entity.\n* PRJ-U-0013 | A subordinated resource references an address which does not belong to any address of the project.\n* PRJ-U-0015 | The referenced status of the project disables the editing of the project and subordinated resources.\n* PRJ-U-0016 | A DateTime property has invalid values (i.e. month = 0 or minute = 60).\n* PRJ-U-0017 | A DateTime property is outside of the allowed range (i.e. year = 1752).\n* PRJ-U-0018 | The provided end is before the begin.\n* PRJ-U-0022 | The entity referenced by debtorId is not a debtor.\n* PRJ-U-1000 | Malformed JSON content.\n* PRJ-U-1001 | No content provided in the body of the request.\n\nPossible error codes for Create are:\n* PRJ-C-0002 | A mandatory field is missing.\n* PRJ-C-0005 | A referenced entity of the project or one of the subordinated resources could not be found.\n* PRJ-C-0006 | At least one field has exceeded the allowed character length.\n* PRJ-C-0007 | The referenced code exists but has an invalid type for a project.\n* PRJ-C-0008 | The referenced location has no parent debtor in the address hierarchy. Please provide *debtorId*. This error may also occur if the *locationId* is copied from the first machine.\n* PRJ-C-0009 | A referenced address exists but is invalid.\n* PRJ-C-0010 | A subordinated resource references an inactive entity.\n* PRJ-C-0013 | A subordinated resource references an address which does not belong to any address of the project.\n* PRJ-C-0016 | A DateTime property has invalid values (i.e. month = 0 or minute = 60).\n* PRJ-C-0017 | A DateTime property is outside of the allowed range (i.e. year = 1752).\n* PRJ-C-0018 | The provided end is before the begin.\n* PRJ-C-0022 | The entity referenced by debtorId is not a debtor.\n* PRJ-C-1000 | Malformed JSON content.\n* PRJ-C-1001 | No content provided in the body of the request.\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ErrorObject"
+                  }
+                },
+                "example": [
+                  {
+                    "errorCode": "PRJ-U-0006",
+                    "message": "The property 'externalId' cannot have more than 20 characters."
+                  }
+                ]
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden. Possible error codes are:\n* PRJ-U-0000 | You have insufficient permissions to update the project.\n* PRJ-C-0000 | You have insufficient permissions to create the project.\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ErrorObject"
+                  }
+                },
+                "example": [
+                  {
+                    "errorCode": "PRJ-U-0000",
+                    "message": "You either have insufficient permissions to update the project or updating is disabled in general."
                   }
                 ]
               }
@@ -3654,7 +3905,7 @@
           "Projects\\Assignments"
         ],
         "summary": "List all assignments of a project.",
-        "description": "Retrieve references to all assignments of a specific project.\n\nYou can use optional query parameters to filter by a specific time frame or erpTicketnumber. For Example:\n* /api/projects/42/assignments?since=2015-10-16\n* /api/projects/42/assignments?until=2015-12-31T23:59:59\n* /api/projects/42/assignments?since=2015-10-16&until=2015-10-31\n* /api/projects/42/assignments?erpTicketNumber=A23-5678\n* /api/projects/42/assignments?since=2015-10-16&erpTicketNumber=A23-5678\n\n**Note:** Timezones are not supported, so the time should be converted to the local timezone of the database server first.    \n",
+        "description": "Retrieve an object with references to all assignments of a project.\n\nYou can use optional query parameters to filter by a specific time frame or erpTicketnumber. For Example:\n* /api/projects/42/assignments?since=2015-10-16\n* /api/projects/42/assignments?until=2015-12-31T23:59:59\n* /api/projects/42/assignments?since=2015-10-16&until=2015-10-31\n* /api/projects/42/assignments?erpTicketNumber=A23-5678\n* /api/projects/42/assignments?since=2015-10-16&erpTicketNumber=A23-5678\n\n**Note:** Timezones are not supported, so the time should be converted to the local timezone of the database server first.    \n",
         "parameters": [
           {
             "name": "since",
@@ -4549,25 +4800,33 @@
         "tags": [
           "Projects\\Contact persons"
         ],
-        "summary": "List all contact persons for a project.",
-        "description": "Retrieve links to all project contact persons at once. Please be aware, that the response will only  contain the URLs of the project contact persons and not the data of each project contact person.\n",
+        "summary": "List all contact persons of a project.",
+        "description": "Retrieve an object with references to all contact persons of a project.",
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "format": "uri"
-                  }
+                  "$ref": "#/components/schemas/ResourceReferences"
                 },
-                "example": [
-                  "api/projects/47/contactPersons/1",
-                  "api/projects/47/contactPersons/2",
-                  "api/projects/47/contactPersons/5"
-                ]
+                "example": {
+                  "itemCount": 3,
+                  "items": [
+                    {
+                      "url": "api/projects/47/contactPersons/1",
+                      "isValid": true
+                    },
+                    {
+                      "url": "api/projects/47/contactPersons/2",
+                      "isValid": true
+                    },
+                    {
+                      "url": "api/projects/47/contactPersons/5",
+                      "isValid": false
+                    }
+                  ]
+                }
               }
             }
           },
@@ -4965,25 +5224,33 @@
         "tags": [
           "Projects\\Machines"
         ],
-        "summary": "List all machines for a project.",
-        "description": "Retrieve links to all project machines for the given project. Please be aware, that the response  will only contain the URLs of the project machines and not the data of each project machine.\n",
+        "summary": "List all machines of a project.",
+        "description": "Retrieve an object with references to all machines of a project.",
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "format": "uri"
-                  }
+                  "$ref": "#/components/schemas/ResourceReferences"
                 },
-                "example": [
-                  "api/projects/47/machines/1",
-                  "api/projects/47/machines/2",
-                  "api/projects/47/machines/5"
-                ]
+                "example": {
+                  "itemCount": 3,
+                  "items": [
+                    {
+                      "url": "api/projects/47/machines/1",
+                      "isValid": true
+                    },
+                    {
+                      "url": "api/projects/47/machines/2",
+                      "isValid": true
+                    },
+                    {
+                      "url": "api/projects/47/machines/5",
+                      "isValid": false
+                    }
+                  ]
+                }
               }
             }
           },
@@ -5395,25 +5662,33 @@
         "tags": [
           "Projects\\Materials"
         ],
-        "summary": "List all materials for a project.",
-        "description": "Retrieve links to all project materials at once. Please be aware, that the response will  only contain the URLs of the project materials and not the data of each project material.\n",
+        "summary": "List all materials of a project.",
+        "description": "Retrieve an object with references to all materials of a project.",
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "format": "uri"
-                  }
+                  "$ref": "#/components/schemas/ResourceReferences"
                 },
-                "example": [
-                  "api/projects/47/materials/1",
-                  "api/projects/47/materials/2",
-                  "api/projects/47/materials/5"
-                ]
+                "example": {
+                  "itemCount": 3,
+                  "items": [
+                    {
+                      "url": "api/projects/47/materials/1",
+                      "isValid": true
+                    },
+                    {
+                      "url": "api/projects/47/materials/2",
+                      "isValid": true
+                    },
+                    {
+                      "url": "api/projects/47/materials/5",
+                      "isValid": false
+                    }
+                  ]
+                }
               }
             }
           },
@@ -5853,7 +6128,7 @@
           "Resources\\Absent assignments"
         ],
         "summary": "List all absent assignments for a resource.",
-        "description": "Retrieve references to all absent assignments of a specific resource.\n\nYou can use optional query parameters to filter by a specific time frame. Examples:\n* /api/resources/42/assignments/absent?since=2015-10-16\n* /api/resources/42/assignments/absent?until=2015-12-31T23:59:59\n* /api/resources/42/assignments/absent?since=2015-10-16&until=2015-10-31\n\n**Note:** Timezones are not supported, so the time should be converted to the local timezone of the database server first.    \n",
+        "description": "Retrieve an object with references to all absent assignments of a resource.\n\nYou can use optional query parameters to filter by a specific time frame. Examples:\n* /api/resources/42/assignments/absent?since=2015-10-16\n* /api/resources/42/assignments/absent?until=2015-12-31T23:59:59\n* /api/resources/42/assignments/absent?since=2015-10-16&until=2015-10-31\n\n**Note:** Timezones are not supported, so the time should be converted to the local timezone of the database server first.    \n",
         "parameters": [
           {
             "name": "since",
@@ -6345,7 +6620,7 @@
           "Resources\\Internal assignments"
         ],
         "summary": "List all internal assignments for a resource.",
-        "description": "Retrieve references to all internal assignments of a specific resource.\n\nYou can use optional query parameters to filter by a specific time frame. Examples:\n* /api/resources/42/assignments/internal?since=2015-10-16\n* /api/resources/42/assignments/internal?until=2015-12-31T23:59:59\n* /api/resources/42/assignments/internal?since=2015-10-16&until=2015-10-31\n\n**Note:** Timezones are not supported, so the time should be converted to the local timezone of the database server first.    \n",
+        "description": "Retrieve an object with references to all internal assignments of a resource.\n\nYou can use optional query parameters to filter by a specific time frame. Examples:\n* /api/resources/42/assignments/internal?since=2015-10-16\n* /api/resources/42/assignments/internal?until=2015-12-31T23:59:59\n* /api/resources/42/assignments/internal?since=2015-10-16&until=2015-10-31\n\n**Note:** Timezones are not supported, so the time should be converted to the local timezone of the database server first.    \n",
         "parameters": [
           {
             "name": "since",
@@ -11349,6 +11624,36 @@
             "type": "string",
             "maxLength": 20,
             "description": "Id of the machine (MAPARK.MASCHNR)."
+          }
+        }
+      },
+      "CompositeProject": {
+        "title": "Composite project",
+        "type": "object",
+        "required": [
+          "project"
+        ],
+        "properties": {
+          "project": {
+            "$ref": "#/components/schemas/Project"
+          },
+          "machines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectMachine"
+            }
+          },
+          "materials": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectMaterial"
+            }
+          },
+          "contactPersons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectContactPerson"
+            }
           }
         }
       }
