@@ -434,6 +434,9 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/AddressAssignment"
+              },
+              "example": {
+                "$ref": "#/components/examples/AddressAssignmentRequest"
               }
             }
           }
@@ -454,6 +457,9 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AddressAssignment"
+                },
+                "example": {
+                  "$ref": "#/components/examples/AddressAssignmentResponse"
                 }
               }
             }
@@ -576,6 +582,9 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AddressAssignment"
+                },
+                "example": {
+                  "$ref": "#/components/examples/AddressAssignmentResponse"
                 }
               }
             }
@@ -637,6 +646,9 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/AddressAssignment"
+              },
+              "example": {
+                "$ref": "#/components/examples/AddressAssignmentRequest"
               }
             }
           }
@@ -648,6 +660,9 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AddressAssignment"
+                },
+                "example": {
+                  "$ref": "#/components/examples/AddressAssignmentResponse"
                 }
               }
             }
@@ -658,6 +673,9 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AddressAssignment"
+                },
+                "example": {
+                  "$ref": "#/components/examples/AddressAssignmentResponse"
                 }
               }
             }
@@ -1151,6 +1169,9 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/ContactPerson"
+              },
+              "example": {
+                "$ref": "#/components/examples/ContactPersonRequest"
               }
             }
           }
@@ -1171,6 +1192,9 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ContactPerson"
+                },
+                "example": {
+                  "$ref": "#/components/examples/ContactPersonResponse"
                 }
               }
             }
@@ -1261,6 +1285,9 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ContactPerson"
+                },
+                "example": {
+                  "$ref": "#/components/examples/ContactPersonResponse"
                 }
               }
             }
@@ -1303,6 +1330,9 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/ContactPerson"
+              },
+              "example": {
+                "$ref": "#/components/examples/ContactPersonRequest"
               }
             }
           }
@@ -1314,6 +1344,9 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ContactPerson"
+                },
+                "example": {
+                  "$ref": "#/components/examples/ContactPersonResponse"
                 }
               }
             }
@@ -1324,6 +1357,9 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ContactPerson"
+                },
+                "example": {
+                  "$ref": "#/components/examples/ContactPersonResponse"
                 }
               }
             }
@@ -1434,7 +1470,7 @@
                 }
               },
               "example": {
-                "contactPersonId": 15,
+                "contactPersonId": 42,
                 "newAddress": "DE-977"
               }
             }
@@ -1456,6 +1492,9 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ContactPerson"
+                },
+                "example": {
+                  "$ref": "#/components/examples/ContactPersonAdrChangeResponse"
                 }
               }
             }
@@ -1563,6 +1602,9 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/Debtor"
+              },
+              "example": {
+                "$ref": "#/components/examples/DebtorRequest"
               }
             }
           }
@@ -1583,6 +1625,9 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Debtor"
+                },
+                "example": {
+                  "$ref": "#/components/examples/DebtorResponse"
                 }
               }
             }
@@ -1674,6 +1719,9 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Debtor"
+                },
+                "example": {
+                  "$ref": "#/components/examples/DebtorResponse"
                 }
               }
             }
@@ -1735,6 +1783,9 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/Debtor"
+              },
+              "example": {
+                "$ref": "#/components/examples/DebtorRequest"
               }
             }
           }
@@ -1746,6 +1797,9 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Debtor"
+                },
+                "example": {
+                  "$ref": "#/components/examples/DebtorResponse"
                 }
               }
             }
@@ -1756,6 +1810,9 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Debtor"
+                },
+                "example": {
+                  "$ref": "#/components/examples/DebtorResponse"
                 }
               }
             }
@@ -9445,37 +9502,37 @@
         "title": "DateTime",
         "type": "object",
         "properties": {
-          "Year": {
+          "year": {
             "description": "",
             "type": "integer",
             "maximum": 9999,
             "minimum": 1753
           },
-          "Month": {
+          "month": {
             "description": "",
             "type": "integer",
             "maximum": 12,
             "minimum": 1
           },
-          "Day": {
+          "day": {
             "description": "",
             "type": "integer",
             "maximum": 31,
             "minimum": 1
           },
-          "Hour": {
+          "hour": {
             "description": "",
             "type": "integer",
             "maximum": 23,
             "minimum": 0
           },
-          "Minute": {
+          "minute": {
             "description": "",
             "type": "integer",
             "maximum": 59,
             "minimum": 0
           },
-          "Second": {
+          "second": {
             "description": "",
             "type": "integer",
             "maximum": 59,
@@ -9487,47 +9544,47 @@
         "title": "ExtendedDateTime",
         "type": "object",
         "properties": {
-          "Year": {
+          "year": {
             "description": "",
             "type": "integer",
             "maximum": 9999,
             "minimum": 1753
           },
-          "Month": {
+          "month": {
             "description": "",
             "type": "integer",
             "maximum": 12,
             "minimum": 1
           },
-          "Day": {
+          "day": {
             "description": "",
             "type": "integer",
             "maximum": 31,
             "minimum": 1
           },
-          "Hour": {
+          "hour": {
             "description": "",
             "type": "integer",
             "maximum": 23,
             "minimum": 0
           },
-          "Minute": {
+          "minute": {
             "description": "",
             "type": "integer",
             "maximum": 59,
             "minimum": 0
           },
-          "Second": {
+          "second": {
             "description": "",
             "type": "integer",
             "maximum": 59,
             "minimum": 0
           },
-          "TimeZoneId": {
+          "timeZoneId": {
             "type": "string",
             "description": "Contains a custom time zone id which indicates the local time zone of the client."
           },
-          "TimeInUTC": {
+          "timeInUTC": {
             "type": "boolean",
             "nullable": true,
             "description": "If set to *true* the provided values for the date and time are understood as UTC values. Because **Innosoft** converts  these values back into the local time of the client the property *TimeZoneId* is mandatory if *TimeInUTC* is set to *true*. If set to *false* or *null* the values are not converted and the object behaves as if it was a normal DateTime object.\n"
@@ -11752,6 +11809,334 @@
         "schema": {
           "type": "string",
           "maxLength": 20
+        }
+      }
+    },
+    "examples": {
+      "AddressAssignmentRequest": {
+        "value": {
+          "id": null,
+          "addressId": null,
+          "codeId": 22,
+          "begin": {
+            "year": 2015,
+            "month": 10,
+            "day": 15,
+            "hour": 8,
+            "minute": 30,
+            "second": 0
+          },
+          "end": {
+            "year": 2015,
+            "month": 10,
+            "day": 16,
+            "hour": 17,
+            "minute": 0,
+            "second": 0
+          },
+          "beginImmutable": true,
+          "beginOfWork": {
+            "year": 2015,
+            "month": 10,
+            "day": 15,
+            "hour": 9,
+            "minute": 30,
+            "second": 0
+          },
+          "endImmutable": true,
+          "endOfWork": {
+            "year": 2015,
+            "month": 10,
+            "day": 16,
+            "hour": 16,
+            "minute": 0,
+            "second": 0
+          },
+          "originalBegin": null,
+          "originalEnd": null,
+          "mainGroupId": null,
+          "groupId": null,
+          "resource": {
+            "id": "ABC23",
+            "immutable": true
+          },
+          "statusId": 3,
+          "sendStatusId": 2,
+          "planned": false,
+          "keyword": null,
+          "remark": "Clean up the site",
+          "description": "Please ensure that nothing is left behind.",
+          "externalAssignment": 0,
+          "completionRate": 0,
+          "weekend": 2,
+          "workingHoursPerDay": 8,
+          "options": {
+            "checkbox0": false,
+            "checkbox1": false,
+            "checkbox2": false,
+            "checkbox3": false,
+            "checkbox4": false,
+            "checkbox5": false,
+            "checkbox6": false,
+            "checkbox7": false,
+            "checkbox8": false,
+            "checkbox9": false,
+            "checkbox10": false,
+            "checkbox11": false,
+            "checkbox12": false,
+            "checkbox13": false
+          }
+        }
+      },
+      "AddressAssignmentResponse": {
+        "value": {
+          "id": 15,
+          "addressId": "47",
+          "codeId": 22,
+          "begin": {
+            "year": 2015,
+            "month": 10,
+            "day": 15,
+            "hour": 8,
+            "minute": 30,
+            "second": 0
+          },
+          "end": {
+            "year": 2015,
+            "month": 10,
+            "day": 16,
+            "hour": 17,
+            "minute": 0,
+            "second": 0
+          },
+          "beginImmutable": true,
+          "beginOfWork": {
+            "year": 2015,
+            "month": 10,
+            "day": 15,
+            "hour": 9,
+            "minute": 30,
+            "second": 0
+          },
+          "endImmutable": true,
+          "endOfWork": {
+            "year": 2015,
+            "month": 10,
+            "day": 16,
+            "hour": 16,
+            "minute": 0,
+            "second": 0
+          },
+          "originalBegin": {
+            "year": 2015,
+            "month": 10,
+            "day": 15,
+            "hour": 8,
+            "minute": 30,
+            "second": 0
+          },
+          "originalEnd": {
+            "year": 2015,
+            "month": 10,
+            "day": 16,
+            "hour": 17,
+            "minute": 0,
+            "second": 0
+          },
+          "mainGroupId": 54,
+          "groupId": 53,
+          "resource": {
+            "id": "ABC23",
+            "immutable": true
+          },
+          "statusId": 3,
+          "sendStatusId": 2,
+          "planned": false,
+          "keyword": "Clean up",
+          "remark": "Clean up the site",
+          "description": "Please ensure that nothing is left behind.",
+          "externalAssignment": 0,
+          "completionRate": 0,
+          "weekend": 2,
+          "workingHoursPerDay": 8,
+          "options": {
+            "checkbox0": false,
+            "checkbox1": false,
+            "checkbox2": false,
+            "checkbox3": false,
+            "checkbox4": false,
+            "checkbox5": false,
+            "checkbox6": false,
+            "checkbox7": false,
+            "checkbox8": false,
+            "checkbox9": false,
+            "checkbox10": false,
+            "checkbox11": false,
+            "checkbox12": false,
+            "checkbox13": false
+          }
+        }
+      },
+      "ContactPersonRequest": {
+        "value": {
+          "id": null,
+          "familyName": "Smith",
+          "addressId": "15",
+          "givenName": "John",
+          "salutation": "Sir",
+          "title": "Ing.",
+          "gender": 0,
+          "department": "Management",
+          "function": "CEO",
+          "telephone1": "+49 231 123456",
+          "telephone2": "+49 231 123457",
+          "mobile1": "+49 141 123456",
+          "mobile2": "+49 141 987654",
+          "email1": "john.smith@company.com",
+          "email2": "smith@company.de",
+          "fax": "+49 231 123458",
+          "statusId": 0,
+          "isMainContact": true,
+          "flag1": true,
+          "flag2": false,
+          "flag3": false,
+          "flag4": true
+        }
+      },
+      "ContactPersonResponse": {
+        "value": {
+          "id": 42,
+          "familyName": "Smith",
+          "addressId": "15",
+          "givenName": "John",
+          "salutation": "Sir",
+          "title": "Ing.",
+          "gender": 0,
+          "department": "Management",
+          "function": "CEO",
+          "telephone1": "+49 231 123456",
+          "telephone2": "+49 231 123457",
+          "mobile1": "+49 141 123456",
+          "mobile2": "+49 141 987654",
+          "email1": "john.smith@company.com",
+          "email2": "smith@company.de",
+          "fax": "+49 231 123458",
+          "statusId": 0,
+          "isMainContact": true,
+          "flag1": true,
+          "flag2": false,
+          "flag3": false,
+          "flag4": true
+        }
+      },
+      "ContactPersonAdrChangeResponse": {
+        "value": {
+          "id": 42,
+          "familyName": "Smith",
+          "addressId": "DE-977",
+          "givenName": "John",
+          "salutation": "Sir",
+          "title": "Ing.",
+          "gender": 0,
+          "department": "Management",
+          "function": "CEO",
+          "telephone1": "+49 231 123456",
+          "telephone2": "+49 231 123457",
+          "mobile1": "+49 141 123456",
+          "mobile2": "+49 141 987654",
+          "email1": "john.smith@company.com",
+          "email2": "smith@company.de",
+          "fax": "+49 231 123458",
+          "statusId": 0,
+          "isMainContact": true,
+          "flag1": true,
+          "flag2": false,
+          "flag3": false,
+          "flag4": true
+        }
+      },
+      "DebtorRequest": {
+        "value": {
+          "id": null,
+          "name": "Innosoft GmbH",
+          "nameAffix1": null,
+          "nameAffix2": null,
+          "nameAffix3": null,
+          "address": {
+            "street": "Martin-Schmeißer-Weg 15",
+            "zipCode": "44227",
+            "city": "Dortmund",
+            "state": "Nordrhein-Westfalen"
+          },
+          "countryCodeId": "DE",
+          "geolocation": {
+            "latitude": 51.5135872,
+            "longitude": 7.465298100000041
+          },
+          "typeId": 1,
+          "mainGroupId": 2,
+          "languageId": 0,
+          "parentId": "4711",
+          "statusId": 0,
+          "poBox": {
+            "number": "54321",
+            "zipCode": "12345"
+          },
+          "bank": {
+            "iban": "DE89370400440532013000",
+            "bankName": "BigBank",
+            "bic": "BIGBDEFFXXX",
+            "clientId": "000001"
+          },
+          "vatRateId": "DE",
+          "priceListId": 13,
+          "taxId": "001235",
+          "termsOfPaymentId": 0,
+          "invoiceCurrencyId": "EUR",
+          "billingId": 0,
+          "matchCode": "ABC123"
+        }
+      },
+      "DebtorResponse": {
+        "value": {
+          "id": 42,
+          "name": "Innosoft GmbH",
+          "nameAffix1": null,
+          "nameAffix2": null,
+          "nameAffix3": null,
+          "address": {
+            "street": "Martin-Schmeißer-Weg 15",
+            "zipCode": "44227",
+            "city": "Dortmund",
+            "state": "Nordrhein-Westfalen"
+          },
+          "countryCodeId": "DE",
+          "geolocation": {
+            "latitude": 51.5135872,
+            "longitude": 7.465298100000041
+          },
+          "typeId": 1,
+          "mainGroupId": 2,
+          "languageId": 0,
+          "parentId": "4711",
+          "statusId": 0,
+          "poBox": {
+            "number": "54321",
+            "zipCode": "12345"
+          },
+          "bank": {
+            "iban": "DE89370400440532013000",
+            "bankName": "BigBank",
+            "bic": "BIGBDEFFXXX",
+            "clientId": "000001"
+          },
+          "vatRateId": "DE",
+          "priceListId": 13,
+          "taxId": "001235",
+          "termsOfPaymentId": 0,
+          "invoiceCurrencyId": "EUR",
+          "billingId": 0,
+          "matchCode": "ABC123"
         }
       }
     }
